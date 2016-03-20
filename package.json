@@ -1,0 +1,24 @@
+{
+  "name": "selektr",
+  "version": "0.0.1",
+  "description": "Text selection library.",
+  "main": "selektr.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lohfu/selektr.git"
+  },
+  "keywords": [
+    "DOM",
+    "range",
+    "selection"
+  ],
+  "author": "Linus Miller <lohfu@lohfu.io> (lohfu@lohfu.io)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lohfu/selektr/issues"
+  },
+  "homepage": "https://github.com/lohfu/selektr#readme"
+}
