@@ -22,6 +22,14 @@
  * @property {Position} end - Position of end caret
  */
 
+var isArray = require('lodash/isArray'),
+	toArray = require('lodash/toArray'),
+	uniq = require('lodash/uniq'),
+	head = require('lodash/head'),
+	last = require('lodash/last'),
+	isString = require('lodash/isString'),
+	isObject = require('lodash/isObject');
+	
 var sectionTags = [ 'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI' ];      
 
 /**
@@ -148,7 +156,7 @@ function uncount(root, offset, countAll) {
 	}
 
 	if(ref.nodeName === 'BR') {
-		offset = _.toArray(ref.parentNode.childNodes).indexOf(ref) + 1;
+		offset = toArray(ref.parentNode.childNodes).indexOf(ref) + 1;
 		ref = ref.parentNode;
 	}
 
@@ -187,10 +195,10 @@ module.exports = {
 			nodes = [],
 			element = opts.element || this._element || document.body;
 
-		if(_.isArray(opts))
+		if(isArray(opts))
 			check = opts;
 		else if(opts instanceof NodeList || opts instanceof HTMLCollection || opts instanceof jQuery)
-			check = _.toArray(opts);
+			check = toArray(opts);
 		else {
 			if(opts.sections) opts = { selector: sectionTags.join(',') };
 			check = descendants(element, opts);
@@ -257,7 +265,7 @@ module.exports = {
 	containsEvery: function(nodes, partlyContained) {
 		var that = this;
 
-		return _.toArray(nodes).every(function(node) {
+		return toArray(nodes).every(function(node) {
 			return that.contains(node, partlyContained);
 		});
 	},
@@ -273,7 +281,7 @@ module.exports = {
 	containsSome: function(nodes, partlyContained) {
 		var that = this;
 
-		return _.toArray(nodes).some(function(node) {
+		return toArray(nodes).some(function(node) {
 			return that.contains(node, partlyContained);
 		});
 
@@ -376,7 +384,7 @@ module.exports = {
 	get: function(caret, element, countAll) {
 		var rng = this.range();
 
-		if(!_.isString(caret)) {
+		if(!isString(caret)) {
 			var end = this.get('end', caret, element);
 
 			// we base start on end instead of vice versa
@@ -418,17 +426,17 @@ module.exports = {
 		if(textNodes.length === 0) {
 			this.set({ ref: node, offset: 0 });
 		} else {
-			var first = _.first(textNodes),
-				last = _.last(textNodes);
+			var f = head(textNodes),
+				l = last(textNodes);
 
 			this.set({
 				start: {
-					ref: first,
+					ref: f,
 					offset: 0
 				},
 				end: {
-					ref: last,
-					offset: last.textContent.length,
+					ref: l,
+					offset: l.textContent.length,
 				}
 			});
 		}
@@ -489,7 +497,7 @@ module.exports = {
 	},
 	
 	update: function(positions, updateContained, updateStyles) {
-		if(_.isObject(positions)) {
+		if(isObject(positions)) {
 			this._positions = positions.ref ? {
 				start: positions,
 				end: positions
@@ -529,7 +537,7 @@ module.exports = {
 
 		var textNodes = _selectron.contained.textNodes;
 
-		this.styles.blocks = _.uniq(_selectron.contained.blocks.map(function(node) {
+		this.styles.blocks = uniq(_selectron.contained.blocks.map(function(node) {
 			return node.nodeName;
 		}));
 
@@ -549,7 +557,7 @@ module.exports = {
 		
 		this.contained.sections = this.contained({ sections: true }, true);
 
-		this.contained.listItems = _.uniq(this.contained.sections.filter(function(node) {
+		this.contained.listItems = uniq(this.contained.sections.filter(function(node) {
 			return node.nodeName === 'LI';
 		}));
 

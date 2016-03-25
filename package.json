@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/lohfu/selektr/issues"
   },
-  "homepage": "https://github.com/lohfu/selektr#readme"
+  "homepage": "https://github.com/lohfu/selektr#readme",
+  "dependencies": {
+    "lodash": "^4.6.1"
+  }
 }
