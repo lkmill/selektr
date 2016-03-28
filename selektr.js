@@ -29,6 +29,11 @@ var isArray = require('lodash/isArray'),
 	last = require('lodash/last'),
 	isString = require('lodash/isString'),
 	isObject = require('lodash/isObject');
+
+var ancestors = require('dollr/ancestors');
+var children = require('dollr/children');
+var closest = require('dollr/closest');
+var is = require('dollr/is');
 	
 var sectionTags = [ 'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI' ];      
 
@@ -46,7 +51,7 @@ function isSection(node) {
 
 function filter(node) {
 	// TODO remove jQuery dependencies
-	return (!$(node).is('UL,OL') && (node.nodeName !== 'BR' || node.nextSibling && !$(node.nextSibling).is('UL,OL'))) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+	return (!is(node, 'UL,OL') && (node.nodeName !== 'BR' || node.nextSibling && !is(node.nextSibling, 'UL,OL'))) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
 }
 
 filter.acceptNode = filter;
@@ -70,8 +75,9 @@ function count(root, ref, countAll) {
 
 	// the following use of currentNode prohibits us from using a NodeIterator
 	// instead of a TreeWalker
-	if(ref)
+	if(ref) {
 		tw.currentNode = ref;
+	}
 
 	node = tw.currentNode;
 
@@ -104,7 +110,7 @@ function offset(element, caret, countAll) {
 		ref = rng[(caret || 'end') + 'Container'],
 		off = rng[(caret || 'end') + 'Offset'];
 
-	element = element || $(ref).closest(sectionTags.join(','))[0];
+	element = element || closest(ref, sectionTags.join(','));
 
 	if(ref.nodeType === 1 && off > 0) {
 		ref = ref.childNodes[off - 1];
@@ -240,8 +246,9 @@ module.exports = {
 				element = element.parentNode;
 			}
 
-			if(element !== node && !$.contains(element, node)) {
-				return partlyContained && $.contains(node,element);
+		
+			if(element !== node && !element.contains(node)) {
+				return partlyContained && node.contains(element);
 			}
 			
 			var rangeStartOffset = offset(element, 'start', true),
@@ -294,14 +301,14 @@ module.exports = {
 		if(!rng.collapsed) {
 			// prevent selection to include next section tags when selecting
 			// to the end of a section
-			if($(rng.endContainer).is(sectionTags.join(',')) && rng.endOffset === 0) {
+			if(is(rng.endContainer, sectionTags.join(',')) && rng.endOffset === 0) {
 				var ref = rng.endContainer;
 
 				// TODO this looks like it could potentially be dangerous
 				while(!ref.previousSibling)
 					ref = ref.parentNode;
 
-				section = $(rng.startContainer).closest(sectionTags.join(','))[0];
+				section = closest(rng.startContainer, sectionTags.join(','));
 
 				this.restore({
 					start: this.get('start', section),
@@ -314,7 +321,7 @@ module.exports = {
 		} else {
 			// ensure similar behaviour in all browers when using arrows or using mouse to move caret.
 			if(rng.endContainer.nodeType === 3 && rng.endOffset === 0) {
-				section = $(rng.endContainer).closest(sectionTags.join(','))[0];
+				section = closest(rng.endContainer, sectionTags.join(','));
 
 				this.restore(this.get('end', section));
 			}
@@ -344,21 +351,19 @@ module.exports = {
 	 * @return {boolean}
 	 */
 	isAtEndOfSection: function(section) {
-		var endContainer = this.range().endContainer,
-			$section;
+		var endContainer = this.range().endContainer;
 
 		if(section) {
-			if(section !== endContainer && !$.contains(section,endContainer))
+			if(section !== endContainer && !section.contains(endContainer))
 				return false;
-
-			$section = $(section);
 		} else {
-			$section = $(endContainer).closest(sectionTags.join(','));
+			section = closest(endContainer, sectionTags.join(','));
 		}
 
-		var off = offset($section[0], 'end'),
-			$nestedList = $section.children('UL,OL'),
-			result = $nestedList.length > 0 ? count($section[0], $nestedList[0]) : count($section[0]);
+		var off = offset(section, 'end'),
+			nestedList = children(section, 'UL,OL'),
+			// TODO maybe skip check here... ie check if second arg is null in count instaed
+			result = nestedList.length > 0 ? count(section, nestedList[0]) : count(section);
 
 		return off === result;
 	},
@@ -369,9 +374,9 @@ module.exports = {
 	 * @return {boolean}
 	 */
 	isAtStartOfSection: function(section) {
-		var $section = $(section || this.range().startContainer).closest(sectionTags.join(','));
+		var section = section || closest(this.range().startContainer, sectionTags.join(','));
 
-		return offset($section[0], 'start') === 0;
+		return offset(section, 'start') === 0;
 	},
 
 	/**
@@ -544,8 +549,10 @@ module.exports = {
 		formats.forEach(function(tag) {
 			var rng = _selectron.range();
 			if((textNodes.length > 0 && textNodes.every(function(node) {
-				return $(node).parentsUntil(_selectron.element).is(tag); 
-			})) || rng.collapsed && ($(rng.startContainer).is(tag) || $(rng.startContainer).parentsUntil(_selectron.element).is(tag))) {
+				return ancestors(node, null, _selectron.element).some((element) => element.matches(tag)); 
+			})) ||
+				rng.collapsed && (is(rng.startContainer, tag) ||
+				ancestors(rng.startContainer, null, _selectron.element).some((element) => element.matches(tag)))) {
 
 				_selectron.styles.formats.push(tag);
 			}
@@ -561,7 +568,7 @@ module.exports = {
 			return node.nodeName === 'LI';
 		}));
 
-		this.contained.lists = this.contained($(this._element).children('UL,OL'), true);
+		this.contained.lists = this.contained(children(this._element, 'UL,OL'), true);
 
 		this.contained.blocks = this.contained.sections.filter(function(node) {
 			return node.nodeName !== 'LI';

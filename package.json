@@ -22,6 +22,8 @@
   },
   "homepage": "https://github.com/lohfu/selektr#readme",
   "dependencies": {
+    "descendants": "0.0.3",
+    "dollr": "0.0.2",
     "lodash": "^4.6.1"
   }
 }
