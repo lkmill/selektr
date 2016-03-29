@@ -25,13 +25,11 @@
 
 const isArray = require('lodash/isArray');
 const toArray = require('lodash/toArray');
-const uniq = require('lodash/uniq');
 const head = require('lodash/head');
 const last = require('lodash/last');
 const isString = require('lodash/isString');
 const isObject = require('lodash/isObject');
 
-const ancestors = require('dollr/ancestors');
 const children = require('dollr/children');
 const closest = require('dollr/closest');
 const is = require('dollr/is');
@@ -204,6 +202,7 @@ module.exports = {
 		else if (opts instanceof NodeList || opts instanceof HTMLCollection)
 			check = toArray(opts);
 		else {
+			// if opts is a plain object, we should use descendants
 			if (opts.sections) opts = { selector: sectionTags.join(',') };
 			check = descendants(element, opts);
 		}
@@ -490,7 +489,7 @@ module.exports = {
 		this._element = element;
 	},
 
-	update(positions, updateContained, updateStyles) {
+	update(positions) {
 		if (isObject(positions)) {
 			this._positions = positions.ref ? {
 				start: positions,
@@ -500,58 +499,5 @@ module.exports = {
 			delete this._positions;
 			this._positions = this.get();
 		}
-
-		if (updateContained !== false)
-			this.updateContained();
-
-		if (updateStyles !== false)
-			this.updateStyles();
-	},
-
-	updateStyles() {
-		const formats = [ 'strong', 'u', 'em', 'strike' ];
-
-		this.styles = {};
-
-		this.styles.alignment = this.contained.blocks.reduce((result, block) => {
-			if (result === undefined) return result;
-
-			let newResult = getComputedStyle(block).textAlign;
-
-			if (newResult === 'start') newResult = 'left';
-
-			if (result === null) result = newResult;
-
-			return result === newResult ? newResult : undefined;
-		}, null);
-
-		this.styles.formats = [];
-
-		const textNodes = this.contained.textNodes;
-
-		this.styles.blocks = uniq(this.contained.blocks.map((node) => node.nodeName));
-
-		formats.forEach((tag) => {
-			const rng = this.range();
-			if ((textNodes.length > 0 && textNodes.every((node) => ancestors(node, null, this.element).some((element) => element.matches(tag)))) ||
-				rng.collapsed && (is(rng.startContainer, tag) ||
-				ancestors(rng.startContainer, null, this.element).some((element) => element.matches(tag)))) {
-				this.styles.formats.push(tag);
-			}
-		});
-	},
-
-	updateContained() {
-		this.contained.sections = this.contained({ sections: true }, true);
-
-		this.contained.listItems = uniq(this.contained.sections.filter((node) => node.nodeName === 'LI'));
-
-		this.contained.lists = this.contained(children(this._element, 'UL,OL'), true);
-
-		this.contained.blocks = this.contained.sections.filter((node) => node.nodeName !== 'LI');
-
-		const commonAncestor = this.range().commonAncestorContainer;
-
-		this.contained.textNodes = commonAncestor.nodeType === 3 ? [ commonAncestor ] : this.contained({ element: commonAncestor, nodeType: 3 }, true);
 	}
 };
