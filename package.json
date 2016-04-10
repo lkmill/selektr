@@ -2,9 +2,13 @@
   "name": "selektr",
   "version": "0.0.3",
   "description": "Text selection library.",
-  "main": "selektr.js",
+  "main": "lib/selektr.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf lib",
+    "lint": "eslint src",
+    "build": "babel src --out-dir lib",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "npm run clean && npm run check && npm run build"
   },
   "repository": {
     "type": "git",
@@ -25,5 +29,12 @@
     "descendants": "0.0.3",
     "dollr": "0.0.2",
     "lodash": "^4.6.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.7.5",
+    "eslint": "^2.7.0",
+    "eslint-config-airbnb": "^6.2.0",
+    "eslint-plugin-react": "^4.3.0",
+    "rimraf": "^2.5.2"
   }
 }
