@@ -1,6 +1,6 @@
 {
   "name": "selektr",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Text selection library.",
   "main": "lib/selektr.js",
   "scripts": {
