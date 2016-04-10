@@ -8,7 +8,7 @@
     "lint": "eslint src",
     "build": "babel src --out-dir lib",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "npm run clean && npm run check && npm run build"
+    "prepublish": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",
@@ -27,8 +27,8 @@
   "homepage": "https://github.com/lohfu/selektr#readme",
   "dependencies": {
     "descendants": "0.0.3",
-    "dollr": "0.0.2",
-    "lodash": "^4.6.1"
+    "dollr": "0.0.3",
+    "lodash": "^4.9.0"
   },
   "devDependencies": {
     "babel-cli": "^6.7.5",
