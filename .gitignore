@@ -34,4 +34,10 @@ node_modules
 
 /dump
 
+/dist
+
+/es
+
 /lib
+
+/*.js
