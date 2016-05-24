@@ -38,6 +38,9 @@ const s = window.getSelection;
 
 const sectionTags = [ 'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI' ];
 
+let _element,
+  _positions;
+
 /**
  * Tests whether `node` is a section element, ie if it is of nodeType 1
  * and its tagName is in `sectionTags`.
@@ -187,7 +190,7 @@ export function contained(opts, partlyContained) {
 
   let check;
   const nodes = [];
-  const element = opts.element || this._element || document.body;
+  const element = opts.element || _element || document.body;
 
   if (isArray(opts))
     check = opts;
@@ -202,7 +205,7 @@ export function contained(opts, partlyContained) {
   // loop through all nodes and check if
   // they are contained by the current selection
   check.forEach((node) => {
-    if (this.contains(node, partlyContained))
+    if (contains(node, partlyContained))
       nodes.push(node);
   });
 
@@ -258,7 +261,7 @@ export function contains(node, partlyContained) {
  * @see contains
  */
 export function containsEvery(nodes, partlyContained) {
-  return toArray(nodes).every((node) => this.contains(node, partlyContained));
+  return toArray(nodes).every((node) => contains(node, partlyContained));
 }
 
 /**
@@ -270,11 +273,11 @@ export function containsEvery(nodes, partlyContained) {
  * @see contains
  */
 export function containsSome(nodes, partlyContained) {
-  return toArray(nodes).some((node) => this.contains(node, partlyContained));
+  return toArray(nodes).some((node) => contains(node, partlyContained));
 }
 
 export function normalize() {
-  const rng = this.range();
+  const rng = range();
   let section;
 
   if (!rng.collapsed) {
@@ -289,8 +292,8 @@ export function normalize() {
 
       section = closest(rng.startContainer, sectionTags.join(','));
 
-      this.restore({
-        start: this.get('start', section),
+      restore({
+        start: get('start', section),
         end: {
           ref: ref.previousSibling,
           offset: count(ref.previousSibling)
@@ -302,7 +305,7 @@ export function normalize() {
     if (rng.endContainer.nodeType === 3 && rng.endOffset === 0) {
       section = closest(rng.endContainer, sectionTags.join(','));
 
-      this.restore(this.get('end', section));
+      restore(get('end', section));
     }
   }
 }
@@ -330,7 +333,7 @@ export function range() {
  * @return {boolean}
  */
 export function isAtEndOfSection(section) {
-  const endContainer = this.range().endContainer;
+  const endContainer = range().endContainer;
 
   if (section) {
     if (section !== endContainer && !section.contains(endContainer))
@@ -353,7 +356,7 @@ export function isAtEndOfSection(section) {
  * @return {boolean}
  */
 export function isAtStartOfSection(section) {
-  section = section || closest(this.range().startContainer, sectionTags.join(','));
+  section = section || closest(range().startContainer, sectionTags.join(','));
 
   return offset(section, 'start') === 0;
 }
@@ -366,16 +369,16 @@ export function isAtStartOfSection(section) {
  * @return {Positions} ref element of both start and end Position will be `element`
  */
 export function get(caret, element, countAll) {
-  const rng = this.range();
+  const rng = range();
 
   if (!isString(caret)) {
-    const end = this.get('end', caret, element);
+    const end = get('end', caret, element);
 
     // we base start on end instead of vice versa
     // because IE treats startOffset very weird sometimes
     return {
       end,
-      start: rng.collapsed ? end : this.get('start', caret, element)
+      start: rng.collapsed ? end : get('start', caret, element)
     };
   } else if (caret !== 'start' && caret !== 'end') {
     throw new Error('You have to pass "start" or "end" if you pass a string as the first parameter');
@@ -388,10 +391,10 @@ export function get(caret, element, countAll) {
     };
   }
 
-  element = element || this._element || document.body;
+  element = element || _element || document.body;
 
-  if (element === this._element && this._positions)
-    return this._positions[caret];
+  if (element === _element && _positions)
+    return _positions[caret];
 
   return {
     ref: element,
@@ -408,12 +411,12 @@ export function select(node) {
   const textNodes = node.nodeType === 3 ? [ node ] : descendants(node, { nodeType: 3 });
 
   if (textNodes.length === 0) {
-    this.set({ ref: node, offset: 0 });
+    set({ ref: node, offset: 0 });
   } else {
     const f = head(textNodes);
     const l = last(textNodes);
 
-    this.set({
+    set({
       start: {
         ref: f,
         offset: 0
@@ -443,10 +446,10 @@ export function restore(positions, update) {
   const start = uncount(positions.start.ref, positions.start.offset);
   const end = positions.end !== positions.start ? uncount(positions.end.ref, positions.end.offset) : start;
 
-  this.set({ start, end });
+  set({ start, end });
 
   if (update)
-    this.update(positions);
+    update(positions);
 }
 
 export function set(positions, update) {
@@ -474,21 +477,20 @@ export function set(positions, update) {
   sel.addRange(rng);
 
   if (update)
-    this.update();
+    update();
 }
 
 export function setElement(element) {
-  this._element = element;
+  _element = element;
 }
 
 export function update(positions) {
   if (isObject(positions)) {
-    this._positions = positions.ref ? {
+    _positions = positions.ref ? {
       start: positions,
       end: positions
     } : positions;
   } else if (positions !== false) {
-    delete this._positions;
-    this._positions = this.get();
+    _positions = get();
   }
 }
