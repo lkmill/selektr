@@ -424,7 +424,7 @@ export function select(node) {
   }
 }
 
-export function set(positions) {
+export function set(positions, shouldUncount) {
   if (positions.ref) {
     positions = {
       start: positions,
@@ -433,8 +433,8 @@ export function set(positions) {
   } else
     positions.end = positions.end || positions.start;
 
-  const start = uncount(positions.start.ref, positions.start.offset);
-  const end = positions.end !== positions.start ? uncount(positions.end.ref, positions.end.offset) : start;
+  const start = shouldUncount === false ? positions.start : uncount(positions.start.ref, positions.start.offset);
+  const end = positions.end !== positions.start ? shouldUncount === false ? positions.end : uncount(positions.end.ref, positions.end.offset) : start;
 
   if ((start.ref.nodeType === 1 && start.offset > start.ref.childNodes.length || start.ref.nodeType !== 1 && start.offset > start.ref.textContent.length) ||
       (end.ref.nodeType === 1 && end.offset > end.ref.childNodes.length || end.ref.nodeType !== 1 && end.offset > end.ref.textContent.length))
