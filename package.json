@@ -31,8 +31,8 @@
   },
   "homepage": "https://github.com/lohfu/selektr#readme",
   "dependencies": {
-    "dollr": "0.0.5",
-    "lodash": "^4.13.0",
+    "dollr": "0.0.6",
+    "lodash": "^4.13.1",
     "lodash-es": "^4.13.1"
   },
   "devDependencies": {
