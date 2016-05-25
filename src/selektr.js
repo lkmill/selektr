@@ -27,7 +27,6 @@ import toArray from 'lodash/toArray';
 import head from 'lodash/head';
 import last from 'lodash/last';
 import isString from 'lodash/isString';
-import isObject from 'lodash/isObject';
 
 import children from 'dollr/children';
 import closest from 'dollr/closest';
@@ -291,7 +290,7 @@ export function normalize() {
 
       section = closest(rng.startContainer, sectionTags.join(','));
 
-      restore({
+      set({
         start: get('start', section),
         end: {
           ref: ref.previousSibling,
@@ -304,7 +303,7 @@ export function normalize() {
     if (rng.endContainer.nodeType === 3 && rng.endOffset === 0) {
       section = closest(rng.endContainer, sectionTags.join(','));
 
-      restore(get('end', section));
+      set(get('end', section));
     }
   }
 }
@@ -425,12 +424,7 @@ export function select(node) {
   }
 }
 
-/**
- * Sets the selection to `position`
- *
- * @param {Position|Positions} position - If a Position, a collapsed range will be set with start and end caret set to `position`
- */
-export function restore(positions) {
+export function set(positions) {
   if (positions.ref) {
     positions = {
       start: positions,
@@ -441,20 +435,6 @@ export function restore(positions) {
 
   const start = uncount(positions.start.ref, positions.start.offset);
   const end = positions.end !== positions.start ? uncount(positions.end.ref, positions.end.offset) : start;
-
-  set({ start, end });
-}
-
-export function set(positions) {
-  let start;
-  let end;
-
-  if (positions.ref) {
-    start = end = positions;
-  } else {
-    start = positions.start;
-    end = positions.end || positions.start;
-  }
 
   if ((start.ref.nodeType === 1 && start.offset > start.ref.childNodes.length || start.ref.nodeType !== 1 && start.offset > start.ref.textContent.length) ||
       (end.ref.nodeType === 1 && end.offset > end.ref.childNodes.length || end.ref.nodeType !== 1 && end.offset > end.ref.textContent.length))
