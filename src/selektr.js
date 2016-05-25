@@ -38,8 +38,7 @@ const s = window.getSelection;
 
 const sectionTags = [ 'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI' ];
 
-let _element,
-  _positions;
+let _element;
 
 /**
  * Tests whether `node` is a section element, ie if it is of nodeType 1
@@ -393,9 +392,6 @@ export function get(caret, element, countAll) {
 
   element = element || _element || document.body;
 
-  if (element === _element && _positions)
-    return _positions[caret];
-
   return {
     ref: element,
     offset: offset(element, caret, countAll)
@@ -434,7 +430,7 @@ export function select(node) {
  *
  * @param {Position|Positions} position - If a Position, a collapsed range will be set with start and end caret set to `position`
  */
-export function restore(positions, update) {
+export function restore(positions) {
   if (positions.ref) {
     positions = {
       start: positions,
@@ -447,12 +443,9 @@ export function restore(positions, update) {
   const end = positions.end !== positions.start ? uncount(positions.end.ref, positions.end.offset) : start;
 
   set({ start, end });
-
-  if (update)
-    update(positions);
 }
 
-export function set(positions, update) {
+export function set(positions) {
   let start;
   let end;
 
@@ -475,22 +468,8 @@ export function set(positions, update) {
 
   sel.removeAllRanges();
   sel.addRange(rng);
-
-  if (update)
-    update();
 }
 
 export function setElement(element) {
   _element = element;
-}
-
-export function update(positions) {
-  if (isObject(positions)) {
-    _positions = positions.ref ? {
-      start: positions,
-      end: positions
-    } : positions;
-  } else if (positions !== false) {
-    _positions = get();
-  }
 }
