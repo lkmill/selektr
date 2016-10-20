@@ -35,7 +35,7 @@ import descendants from 'dollr/descendants';
 
 const s = window.getSelection;
 
-const sectionTags = [ 'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI' ];
+const sectionTags = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI'];
 
 let _element;
 
@@ -83,11 +83,13 @@ export function count(root, ref, countAll) {
   node = tw.currentNode;
 
   while (node) {
-    if (node !== root && (countAll || isSection(node) || node.nodeName === 'BR'))
-      off++;
+    if (node !== root && (countAll || isSection(node) || node.nodeName === 'BR')) {
+      off += 1;
+    }
 
-    if (node !== ref && node.nodeType === 3)
-      off = off + node.textContent.length;
+    if (node !== ref && node.nodeType === 3) {
+      off += node.textContent.length;
+    }
 
     node = ref ? tw.previousNode() : tw.nextNode();
   }
@@ -101,15 +103,16 @@ export function count(root, ref, countAll) {
  *
  * @static
  * @param {Element} element - Containing element to count offset relative to
- * @param {string} [caret=start] - Parameter that determines whether we should fetch start or endContainer
+ * @param {string} [caret=start] - Parameter that determines whether we should
+ * fetch start or endContainer
  * @param {boolean} [countAll] - Boolean parameter to determine whether to count all elements
  * @return {number} The total offset of the caret relative to `element`
  * @see count
  */
 export function offset(element, caret, countAll) {
   const rng = s().getRangeAt(0);
-  let ref = rng[(caret || 'end') + 'Container'];
-  let off = rng[(caret || 'end') + 'Offset'];
+  let ref = rng[`${caret || 'end'}Container`];
+  let off = rng[`${caret || 'end'}Offset`];
 
   element = element || closest(ref, sectionTags.join(','));
 
@@ -141,23 +144,26 @@ export function uncount(root, off, countAll) {
 
   // IE fix. IE does not allow treeWalkers to be created on textNodes
   if (root.nodeType === 1) {
-    const tw = document.createTreeWalker(root, NodeFilter.SHOW_ALL, countAll ? null : filter, false);
+    const tw = document.createTreeWalker(root,
+        NodeFilter.SHOW_ALL, countAll ? null : filter, false);
 
     while ((node = tw.nextNode())) {
       if (countAll || isSection(node) || node.nodeName === 'BR') {
-        if (off === 0)
+        if (off === 0) {
           break;
+        }
 
-        off--;
+        off -= 1;
       }
 
       ref = node;
 
       if (node.nodeType === 3) {
-        if (off > node.textContent.length)
-          off = off - node.textContent.length;
-        else
+        if (off > node.textContent.length) {
+          off -= node.textContent.length;
+        } else {
           break;
+        }
       }
     }
   }
@@ -169,46 +175,8 @@ export function uncount(root, off, countAll) {
 
   return {
     ref,
-    offset: off
+    offset: off,
   };
-}
-
-/**
- * Returns all elements contained by the current selection
- *
- * @param {Element} element - Element to count relative
- * @param {Node[]|NodeList|string|number|function} [ufo] - Filters
- * @param {number} [levels] - How many levels of descendants should be collected. If `levels` is not set, all levels will be traversed
- * @param {boolean} [partlyContained] - How many levels of descendants should be collected. If `levels` is not set, all levels will be traversed
- * @param {boolean} [onlyDeepest] - How many levels of descendants should be collected. If `levels` is not set, all levels will be traversed
- * @return {Node[]} Array contained all contained nodes
- */
-export function contained(opts, partlyContained) {
-  opts = opts || {};
-
-  let check;
-  const nodes = [];
-  const element = opts.element || _element || document.body;
-
-  if (isArray(opts))
-    check = opts;
-  else if (opts instanceof NodeList || opts instanceof HTMLCollection)
-    check = toArray(opts);
-  else {
-    // if opts is a plain object, we should use descendants
-    if (opts.sections) opts = { selector: sectionTags.join(',') };
-    check = descendants(element, opts);
-  }
-
-  // loop through all nodes and check if
-  // they are contained by the current selection
-  check.forEach((node) => {
-    if (contains(node, partlyContained))
-      nodes.push(node);
-  });
-
-  // return any contained nodes
-  return nodes;
 }
 
 /**
@@ -244,10 +212,19 @@ export function contains(node, partlyContained) {
   const rangeStartOffset = offset(element, 'start', true);
   const rangeEndOffset = offset(element, 'end', true);
   const startOffset = count(element, node, true);
-  const endOffset = node.nodeType === 1 ? startOffset + count(node, null, true) + 1 : startOffset + node.textContent.length;
+  const endOffset = node.nodeType === 1
+    ? startOffset + count(node, null, true) + 1 : startOffset + node.textContent.length;
 
-  return (startOffset >= rangeStartOffset && endOffset <= rangeEndOffset ||
-      (partlyContained && ((rangeStartOffset >= startOffset && rangeStartOffset <= endOffset) || (rangeEndOffset >= startOffset && rangeEndOffset <= endOffset))));
+  return (
+    startOffset >= rangeStartOffset && endOffset <= rangeEndOffset
+    || (partlyContained && (
+       (rangeStartOffset >= startOffset
+         && rangeStartOffset <= endOffset
+       ) || (
+         rangeEndOffset >= startOffset && rangeEndOffset <= endOffset
+       )
+    ))
+  );
 }
 
 /**
@@ -274,6 +251,57 @@ export function containsSome(nodes, partlyContained) {
   return toArray(nodes).some((node) => contains(node, partlyContained));
 }
 
+
+/**
+ * Returns all elements contained by the current selection
+ *
+ * @param {Element} element - Element to count relative
+ * @param {Node[]|NodeList|string|number|function} [ufo] - Filters
+ * @param {number} [levels] - How many levels of descendants should be
+ * collected. If `levels` is not set, all levels will be traversed
+ * @param {boolean} [partlyContained] - How many levels of descendants should
+ * be collected. If `levels` is not set, all levels will be traversed
+ * @param {boolean} [onlyDeepest] - How many levels of descendants should be
+ * collected. If `levels` is not set, all levels will be traversed
+ * @return {Node[]} Array contained all contained nodes
+ */
+export function contained(opts, partlyContained) {
+  opts = opts || {};
+
+  let check;
+  const nodes = [];
+  const element = opts.element || _element || document.body;
+
+  if (isArray(opts)) {
+    check = opts;
+  } else if (opts instanceof NodeList || opts instanceof HTMLCollection) {
+    check = toArray(opts);
+  } else {
+    // if opts is a plain object, we should use descendants
+    if (opts.sections) opts = { selector: sectionTags.join(',') };
+    check = descendants(element, opts);
+  }
+
+  // loop through all nodes and check if
+  // they are contained by the current selection
+  check.forEach((node) => {
+    if (contains(node, partlyContained)) {
+      nodes.push(node);
+    }
+  });
+
+  // return any contained nodes
+  return nodes;
+}
+
+/**
+ * Tests whether `node` is contained by the current selection
+ *
+ * @param {Node} node - Element to count relative
+ * @param {boolean} [partlyContained] - Return nodes that are not completely contained by selection
+ * @return {boolean}
+ */
+
 export function normalize() {
   const rng = range();
   let section;
@@ -285,8 +313,9 @@ export function normalize() {
       let ref = rng.endContainer;
 
       // TODO this looks like it could potentially be dangerous
-      while (!ref.previousSibling)
+      while (!ref.previousSibling) {
         ref = ref.parentNode;
+      }
 
       section = closest(rng.startContainer, sectionTags.join(','));
 
@@ -294,17 +323,15 @@ export function normalize() {
         start: get('start', section),
         end: {
           ref: ref.previousSibling,
-          offset: count(ref.previousSibling)
-        }
+          offset: count(ref.previousSibling),
+        },
       });
     }
-  } else {
+  } else if (rng.endContainer.nodeType === 3 && rng.endOffset === 0) {
     // ensure similar behaviour in all browers when using arrows or using mouse to move caret.
-    if (rng.endContainer.nodeType === 3 && rng.endOffset === 0) {
-      section = closest(rng.endContainer, sectionTags.join(','));
+    section = closest(rng.endContainer, sectionTags.join(','));
 
-      set(get('end', section));
-    }
+    set(get('end', section));
   }
 }
 
@@ -317,9 +344,10 @@ export function range() {
   // retrieve the current selection
   const sel = s();
 
-  if (sel.rangeCount > 0)
+  if (sel.rangeCount > 0) {
     // selection has at least one range, return the first
     return sel.getRangeAt(0);
+  }
 
   // selection has no range, return null
   return null;
@@ -334,8 +362,9 @@ export function isAtEndOfSection(section) {
   const endContainer = range().endContainer;
 
   if (section) {
-    if (section !== endContainer && !section.contains(endContainer))
+    if (section !== endContainer && !section.contains(endContainer)) {
       return false;
+    }
   } else {
     section = closest(endContainer, sectionTags.join(','));
   }
@@ -376,7 +405,7 @@ export function get(caret, element, countAll) {
     // because IE treats startOffset very weird sometimes
     return {
       end,
-      start: rng.collapsed ? end : get('start', caret, element)
+      start: rng.collapsed ? end : get('start', caret, element),
     };
   } else if (caret !== 'start' && caret !== 'end') {
     throw new Error('You have to pass "start" or "end" if you pass a string as the first parameter');
@@ -384,8 +413,8 @@ export function get(caret, element, countAll) {
 
   if (element === true) {
     return {
-      ref: rng[caret + 'Container'],
-      offset: rng[caret + 'Offset']
+      ref: rng[`${caret}Container`],
+      offset: rng[`${caret}Offset`],
     };
   }
 
@@ -393,7 +422,7 @@ export function get(caret, element, countAll) {
 
   return {
     ref: element,
-    offset: offset(element, caret, countAll)
+    offset: offset(element, caret, countAll),
   };
 }
 
@@ -403,7 +432,7 @@ export function get(caret, element, countAll) {
  * @param {Node} node - The node to select
  */
 export function select(node) {
-  const textNodes = node.nodeType === 3 ? [ node ] : descendants(node, { nodeType: 3 });
+  const textNodes = node.nodeType === 3 ? [node] : descendants(node, { nodeType: 3 });
 
   if (textNodes.length === 0) {
     set({ ref: node, offset: 0 });
@@ -414,12 +443,12 @@ export function select(node) {
     set({
       start: {
         ref: f,
-        offset: 0
+        offset: 0,
       },
       end: {
         ref: l,
         offset: l.textContent.length,
-      }
+      },
     });
   }
 }
@@ -428,17 +457,35 @@ export function set(positions, shouldUncount) {
   if (positions.ref) {
     positions = {
       start: positions,
-      end: positions
+      end: positions,
     };
-  } else
+  } else {
     positions.end = positions.end || positions.start;
+  }
 
-  const start = shouldUncount === false ? positions.start : uncount(positions.start.ref, positions.start.offset);
-  const end = positions.end !== positions.start ? shouldUncount === false ? positions.end : uncount(positions.end.ref, positions.end.offset) : start;
+  const start = shouldUncount === false
+    ? positions.start : uncount(positions.start.ref, positions.start.offset);
 
-  if ((start.ref.nodeType === 1 && start.offset > start.ref.childNodes.length || start.ref.nodeType !== 1 && start.offset > start.ref.textContent.length) ||
-      (end.ref.nodeType === 1 && end.offset > end.ref.childNodes.length || end.ref.nodeType !== 1 && end.offset > end.ref.textContent.length))
+  // eslint-disable-next-line
+  const end = positions.end !== positions.start
+    ? shouldUncount === false ? positions.end : uncount(positions.end.ref, positions.end.offset)
+    : start;
+
+  if (
+      (
+        start.ref.nodeType === 1
+        && start.offset > start.ref.childNodes.length
+        || start.ref.nodeType !== 1
+        && start.offset > start.ref.textContent.length
+      ) || (
+        end.ref.nodeType === 1
+        && end.offset > end.ref.childNodes.length
+        || end.ref.nodeType !== 1
+        && end.offset > end.ref.textContent.length
+      )
+  ) {
     return;
+  }
 
   const rng = document.createRange();
   const sel = s();
