@@ -13,7 +13,8 @@
     "build:umd": "mkdir -p dist && BABEL_ENV=es rollup -c -o dist/selektr.js",
     "build:umd:min": "mkdir -p dist && BABEL_ENV=es rollup -c | uglifyjs -c -m > dist/selektr.min.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "npm run clean && npm run lint && npm run build"
+    "prepublish": "npm run clean && npm run lint && npm run build",
+    "preversion": "npm run lint"
   },
   "repository": {
     "type": "git",
