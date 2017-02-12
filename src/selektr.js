@@ -22,16 +22,7 @@
  * @property {Position} end - Position of end caret
  */
 
-import isArray from 'lodash/isArray';
-import toArray from 'lodash/toArray';
-import head from 'lodash/head';
-import last from 'lodash/last';
-import isString from 'lodash/isString';
-
-import children from 'dollr/children';
-import closest from 'dollr/closest';
-import is from 'dollr/is';
-import descendants from 'dollr/descendants';
+import { children, closest, is, descendants } from 'dollr';
 
 const s = window.getSelection;
 
@@ -169,7 +160,7 @@ export function uncount(root, off, countAll) {
   }
 
   if (ref.nodeName === 'BR') {
-    off = toArray(ref.parentNode.childNodes).indexOf(ref) + 1;
+    off = Array.from(ref.parentNode.childNodes).indexOf(ref) + 1;
     ref = ref.parentNode;
   }
 
@@ -236,7 +227,7 @@ export function contains(node, partlyContained) {
  * @see contains
  */
 export function containsEvery(nodes, partlyContained) {
-  return toArray(nodes).every((node) => contains(node, partlyContained));
+  return Array.from(nodes).every((node) => contains(node, partlyContained));
 }
 
 /**
@@ -248,7 +239,7 @@ export function containsEvery(nodes, partlyContained) {
  * @see contains
  */
 export function containsSome(nodes, partlyContained) {
-  return toArray(nodes).some((node) => contains(node, partlyContained));
+  return Array.from(nodes).some((node) => contains(node, partlyContained));
 }
 
 
@@ -272,10 +263,10 @@ export function contained(opts, partlyContained) {
   const nodes = [];
   const element = opts.element || _element || document.body;
 
-  if (isArray(opts)) {
+  if (Array.isArray(opts)) {
     check = opts;
   } else if (opts instanceof NodeList || opts instanceof HTMLCollection) {
-    check = toArray(opts);
+    check = Array.from(opts);
   } else {
     // if opts is a plain object, we should use descendants
     if (opts.sections) opts = { selector: sectionTags.join(',') };
@@ -398,7 +389,7 @@ export function isAtStartOfSection(section) {
 export function get(caret, element, countAll) {
   const rng = range();
 
-  if (!isString(caret)) {
+  if (caret !== 'string') {
     const end = get('end', caret, element);
 
     // we base start on end instead of vice versa
@@ -437,8 +428,8 @@ export function select(node) {
   if (textNodes.length === 0) {
     set({ ref: node, offset: 0 });
   } else {
-    const f = head(textNodes);
-    const l = last(textNodes);
+    const f = textNodes[0];
+    const l = textNodes[textNodes.length - 1];
 
     set({
       start: {
