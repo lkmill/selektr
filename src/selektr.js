@@ -389,7 +389,7 @@ export function isAtStartOfSection(section) {
 export function get(caret, element, countAll) {
   const rng = range();
 
-  if (caret !== 'string') {
+  if (typeof caret !== 'string') {
     const end = get('end', caret, element);
 
     // we base start on end instead of vice versa
