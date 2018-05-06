@@ -22,7 +22,10 @@
  * @property {Position} end - Position of end caret
  */
 
-import { children, closest, is, descendants } from 'dollr'
+import children from '@domp/children'
+import closest from '@domp/closest'
+import is from '@domp/is'
+import find from '@domp/find'
 
 const sectionTags = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI']
 
@@ -267,7 +270,7 @@ export function contained (opts, partlyContained) {
   } else {
     // if opts is a plain object, we should use descendants
     if (opts.sections) opts = { selector: sectionTags.join(',') }
-    check = descendants(element, opts)
+    check = find(element, opts)
   }
 
   // loop through all nodes and check if
@@ -420,7 +423,7 @@ export function get (caret, element, countAll) {
  * @param {Node} node - The node to select
  */
 export function select (node) {
-  const textNodes = node.nodeType === 3 ? [node] : descendants(node, { nodeType: 3 })
+  const textNodes = node.nodeType === 3 ? [node] : find(node, { nodeType: 3 })
 
   if (textNodes.length === 0) {
     set({ ref: node, offset: 0 })
