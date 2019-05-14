@@ -3,6 +3,7 @@
   "version": "0.1.5",
   "description": "Text selection library.",
   "main": "lib/index",
+  "module": "lib/index.mjs",
   "scripts": {
     "clean": "rimraf dist lib",
     "lint": "eslint --ext .js --ext .mjs src",
