@@ -30,26 +30,26 @@
   },
   "homepage": "https://github.com/lohfu/selektr#readme",
   "dependencies": {
-    "@domp/children": "^0.1.0",
-    "@domp/closest": "^0.1.0",
-    "@domp/find": "^0.1.1",
-    "@domp/is": "^0.2.2"
+    "@domp/children": "^0.4.0",
+    "@domp/closest": "^0.3.0",
+    "@domp/is": "^0.3.0",
+    "@domp/select": "^0.3.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.46",
-    "@babel/core": "^7.0.0-beta.46",
-    "@babel/preset-env": "^7.0.0-beta.46",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "eslint": "^4.19.1",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.11.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-standard": "^3.1.0",
-    "rimraf": "^2.6.2",
-    "rollup": "^0.58.2",
-    "rollup-plugin-babel": "^4.0.0-beta.2",
-    "rollup-plugin-node-resolve": "^3.3.0",
-    "uglify-js": "^3.3.23"
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "babel-plugin-add-module-exports": "^1.0.2",
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.11.3",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-node-resolve": "^4.2.4",
+    "uglify-js": "^3.5.12"
   }
 }

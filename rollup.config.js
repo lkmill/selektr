@@ -6,13 +6,7 @@ export default {
     babel({
       exclude: 'node_modules/**/*',
     }),
-    nodeResolve({
-      extensions: [ '.mjs', '.js' ],
-      jsnext: true,
-      main: true,
-      module: true,
-      browser: true,
-    }),
+    nodeResolve(),
   ],
   input: 'src/index.mjs',
   output: {
