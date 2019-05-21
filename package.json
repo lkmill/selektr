@@ -1,6 +1,6 @@
 {
   "name": "selektr",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Text selection library.",
   "main": "lib/index",
   "module": "lib/index.mjs",
