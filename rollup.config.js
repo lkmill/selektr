@@ -15,5 +15,6 @@ module.exports = {
     file: `dist/selektr.js`,
     format: 'umd',
     name: 'selektr',
+    sourcemap: true,
   },
 }
