@@ -1,7 +1,9 @@
-import babel from 'rollup-plugin-babel'
-import nodeResolve from 'rollup-plugin-node-resolve'
+'use strict'
 
-export default {
+const babel = require('rollup-plugin-babel')
+const nodeResolve = require('rollup-plugin-node-resolve')
+
+module.exports = {
   plugins: [
     babel({
       exclude: 'node_modules/**/*',
@@ -10,6 +12,7 @@ export default {
   ],
   input: 'src/index.mjs',
   output: {
+    file: `dist/selektr.js`,
     format: 'umd',
     name: 'selektr',
   },

@@ -10,8 +10,8 @@
     "build": "npm run build:cjs && npm run build:esm && npm run build:umd && npm run build:umd:min",
     "build:cjs": "BABEL_ENV=cjs babel src --out-dir lib",
     "build:esm": "BABEL_ENV=esm babel src --keep-file-extension --out-dir lib",
-    "build:umd": "mkdir -p dist && BABEL_ENV=umd rollup -c -o dist/selektr.js",
-    "build:umd:min": "mkdir -p dist && BABEL_ENV=umd rollup -c | uglifyjs -c -m > dist/selekr.min.js",
+    "build:umd": "BABEL_ENV=umd rollup -c",
+    "build:umd:min": "BABEL_ENV=umd rollup -c ./rollup.config.minify.js",
     "prepublish": "npm run clean && npm run lint && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -51,6 +51,6 @@
     "rollup": "^1.11.3",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-node-resolve": "^4.2.4",
-    "uglify-js": "^3.5.12"
+    "rollup-plugin-uglify": "^6.0.2"
   }
 }
