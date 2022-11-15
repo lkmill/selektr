@@ -38,13 +38,15 @@ let _element
  * @param {Node} node - The node to check if it is a section element
  * @return {boolean}
  */
-function isSection (node) {
+function isSection(node) {
   return node.nodeType === 1 && sectionTags.indexOf(node.tagName) !== -1
 }
 
-function filter (node) {
+function filter(node) {
   // TODO remove jQuery dependencies
-  return (!is(node, 'UL,OL') && (node.nodeName !== 'BR' || (node.nextSibling && !is(node.nextSibling, 'UL,OL')))) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP
+  return !is(node, 'UL,OL') && (node.nodeName !== 'BR' || (node.nextSibling && !is(node.nextSibling, 'UL,OL')))
+    ? NodeFilter.FILTER_ACCEPT
+    : NodeFilter.FILTER_SKIP
 }
 
 filter.acceptNode = filter
@@ -61,7 +63,7 @@ filter.acceptNode = filter
  * @param {boolean} [countAll] - Boolean parameter to determine whether to count all steps
  * @return {number} The total offset of the caret relative to element
  */
-export function count (root, ref, countAll) {
+export function count(root, ref, countAll) {
   let node
   let off = 0
   const tw = document.createTreeWalker(root, NodeFilter.SHOW_ALL, countAll ? null : filter, false)
@@ -101,7 +103,7 @@ export function count (root, ref, countAll) {
  * @return {number} The total offset of the caret relative to `element`
  * @see count
  */
-export function offset (element, caret, countAll) {
+export function offset(element, caret, countAll) {
   const rng = window.getSelection().getRangeAt(0)
   let ref = rng[`${caret || 'end'}Container`]
   let off = rng[`${caret || 'end'}Offset`]
@@ -128,7 +130,7 @@ export function offset (element, caret, countAll) {
  * @param {boolean} [countAll] - Boolean parameter to determine whether to count all elements
  * @return {Position}
  */
-export function uncount (root, off, countAll) {
+export function uncount(root, off, countAll) {
   off = off || 0
 
   let node
@@ -136,8 +138,7 @@ export function uncount (root, off, countAll) {
 
   // IE fix. IE does not allow treeWalkers to be created on textNodes
   if (root.nodeType === 1) {
-    const tw = document.createTreeWalker(root,
-      NodeFilter.SHOW_ALL, countAll ? null : filter, false)
+    const tw = document.createTreeWalker(root, NodeFilter.SHOW_ALL, countAll ? null : filter, false)
 
     while ((node = tw.nextNode())) {
       if (countAll || isSection(node) || node.nodeName === 'BR') {
@@ -178,7 +179,7 @@ export function uncount (root, off, countAll) {
  * @param {boolean} [partlyContained] - Return nodes that are not completely contained by selection
  * @return {boolean}
  */
-export function contains (node, partlyContained) {
+export function contains(node, partlyContained) {
   // default, unoverridable behaviour of Selection.containsNode() for textNodes
   // is to always test partlyContained = true
   partlyContained = node.nodeType === 3 ? true : !!partlyContained
@@ -204,18 +205,14 @@ export function contains (node, partlyContained) {
   const rangeStartOffset = offset(element, 'start', true)
   const rangeEndOffset = offset(element, 'end', true)
   const startOffset = count(element, node, true)
-  const endOffset = node.nodeType === 1
-    ? startOffset + count(node, null, true) + 1 : startOffset + node.textContent.length
+  const endOffset =
+    node.nodeType === 1 ? startOffset + count(node, null, true) + 1 : startOffset + node.textContent.length
 
   return (
     (startOffset >= rangeStartOffset && endOffset <= rangeEndOffset) ||
-    (partlyContained && (
-      (rangeStartOffset >= startOffset &&
-         rangeStartOffset <= endOffset
-      ) || (
-        rangeEndOffset >= startOffset && rangeEndOffset <= endOffset
-      )
-    ))
+    (partlyContained &&
+      ((rangeStartOffset >= startOffset && rangeStartOffset <= endOffset) ||
+        (rangeEndOffset >= startOffset && rangeEndOffset <= endOffset)))
   )
 }
 
@@ -227,7 +224,7 @@ export function contains (node, partlyContained) {
  * @return {boolean}
  * @see contains
  */
-export function containsEvery (nodes, partlyContained) {
+export function containsEvery(nodes, partlyContained) {
   return Array.from(nodes).every((node) => contains(node, partlyContained))
 }
 
@@ -239,7 +236,7 @@ export function containsEvery (nodes, partlyContained) {
  * @return {boolean}
  * @see contains
  */
-export function containsSome (nodes, partlyContained) {
+export function containsSome(nodes, partlyContained) {
   return Array.from(nodes).some((node) => contains(node, partlyContained))
 }
 
@@ -256,7 +253,7 @@ export function containsSome (nodes, partlyContained) {
  * collected. If `levels` is not set, all levels will be traversed
  * @return {Node[]} Array contained all contained nodes
  */
-export function contained (opts, partlyContained) {
+export function contained(opts, partlyContained) {
   opts = opts || {}
 
   let check
@@ -293,7 +290,7 @@ export function contained (opts, partlyContained) {
  * @return {boolean}
  */
 
-export function normalize () {
+export function normalize() {
   const rng = range()
   let section
 
@@ -331,7 +328,7 @@ export function normalize () {
  *
  * @return {Range}
  */
-export function range () {
+export function range() {
   // retrieve the current selection
   const sel = window.getSelection()
 
@@ -349,7 +346,7 @@ export function range () {
  *
  * @return {boolean}
  */
-export function isAtEndOfSection (section) {
+export function isAtEndOfSection(section) {
   const endContainer = range().endContainer
 
   if (section) {
@@ -373,7 +370,7 @@ export function isAtEndOfSection (section) {
  *
  * @return {boolean}
  */
-export function isAtStartOfSection (section) {
+export function isAtStartOfSection(section) {
   section = section || closest(range().startContainer, sectionTags.join(','))
 
   return offset(section, 'start') === 0
@@ -386,7 +383,7 @@ export function isAtStartOfSection (section) {
  * @param {boolean} [countAll] - Boolean parameter to determine whether to count all steps
  * @return {Positions} ref element of both start and end Position will be `element`
  */
-export function get (caret, element, countAll) {
+export function get(caret, element, countAll) {
   const rng = range()
 
   if (typeof caret !== 'string') {
@@ -422,7 +419,7 @@ export function get (caret, element, countAll) {
  *
  * @param {Node} node - The node to select
  */
-export function select (node) {
+export function select(node) {
   const textNodes = node.nodeType === 3 ? [node] : descendants(node, { nodeType: 3 })
 
   if (textNodes.length === 0) {
@@ -444,7 +441,7 @@ export function select (node) {
   }
 }
 
-export function set (positions, shouldUncount) {
+export function set(positions, shouldUncount) {
   if (positions.ref) {
     positions = {
       start: positions,
@@ -454,22 +451,21 @@ export function set (positions, shouldUncount) {
     positions.end = positions.end || positions.start
   }
 
-  const start = shouldUncount === false
-    ? positions.start : uncount(positions.start.ref, positions.start.offset)
+  const start = shouldUncount === false ? positions.start : uncount(positions.start.ref, positions.start.offset)
 
   // eslint-disable-next-line
-  const end = positions.end !== positions.start
-    ? shouldUncount === false ? positions.end : uncount(positions.end.ref, positions.end.offset)
-    : start
+  const end =
+    positions.end !== positions.start
+      ? shouldUncount === false
+        ? positions.end
+        : uncount(positions.end.ref, positions.end.offset)
+      : start
 
   if (
-    (
-      (start.ref.nodeType === 1 && start.offset > start.ref.childNodes.length) ||
-      (start.ref.nodeType !== 1 && start.offset > start.ref.textContent.length)
-    ) || (
-      (end.ref.nodeType === 1 && end.offset > end.ref.childNodes.length) ||
-      (end.ref.nodeType !== 1 && end.offset > end.ref.textContent.length)
-    )
+    (start.ref.nodeType === 1 && start.offset > start.ref.childNodes.length) ||
+    (start.ref.nodeType !== 1 && start.offset > start.ref.textContent.length) ||
+    (end.ref.nodeType === 1 && end.offset > end.ref.childNodes.length) ||
+    (end.ref.nodeType !== 1 && end.offset > end.ref.textContent.length)
   ) {
     return
   }
@@ -484,6 +480,6 @@ export function set (positions, shouldUncount) {
   sel.addRange(rng)
 }
 
-export function setElement (element) {
+export function setElement(element) {
   _element = element
 }

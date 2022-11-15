@@ -5,13 +5,14 @@
   "main": "lib/index",
   "module": "lib/index.mjs",
   "scripts": {
-    "clean": "rimraf dist lib",
-    "lint": "eslint --ext .cjs,.js,.mjs .",
     "build": "npm run build:cjs && npm run build:esm && npm run build:umd && npm run build:umd:min",
     "build:cjs": "BABEL_ENV=cjs babel src --source-maps --out-dir lib",
     "build:esm": "BABEL_ENV=esm babel src --source-maps --keep-file-extension --out-dir lib",
     "build:umd": "BABEL_ENV=umd rollup -c",
     "build:umd:min": "BABEL_ENV=umd rollup -c ./rollup.config.minify.js",
+    "clean": "rimraf dist lib",
+    "format": "prettier --write .",
+    "lint": "eslint --ext .cjs,.js,.mjs .",
     "prepublishOnly": "npm run clean && npm run lint && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -45,10 +46,12 @@
     "@rollup/plugin-terser": "^0.1.0",
     "babel-plugin-add-module-exports": "^1.0.4",
     "eslint": "^8.27.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.5.1",
     "eslint-plugin-promise": "^6.1.1",
+    "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "rollup": "^3.3.0"
   }
