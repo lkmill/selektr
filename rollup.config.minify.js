@@ -1,9 +1,7 @@
-'use strict'
-
-const terser = require('@rollup/plugin-terser')
-const config = require('./rollup.config')
+import terser from '@rollup/plugin-terser'
+import config from './rollup.config.js'
 
 config.output.file = config.output.file.replace(/js$/, 'min.js')
 config.plugins = config.plugins.concat(terser())
 
-module.exports = config
+export default config
