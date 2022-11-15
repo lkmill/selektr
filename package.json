@@ -13,6 +13,7 @@
     "clean": "rimraf dist lib",
     "format": "prettier --write .",
     "lint": "eslint --ext .cjs,.js,.mjs .",
+    "prepare": "husky install",
     "prepublishOnly": "npm run clean && npm run lint && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -51,6 +52,8 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.5.1",
     "eslint-plugin-promise": "^6.1.1",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "rollup": "^3.3.0"
