@@ -916,12 +916,13 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     to-fast-properties "^2.0.0"
 
-"@domp/ancestors@^0.1.0":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@domp/ancestors/-/ancestors-0.1.2.tgz#be0461c9cadd3f06ee0c86893ba4a9356e962bb6"
-  integrity sha512-YWglIP2QT3HwBcGlrY8tzyf385cQ8G/77oRazmKdfYl65mWFfI1awV+k87Ti7qCH+oKevWhGXWzMEaaBwlNN8Q==
+"@domp/ancestors@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@domp/ancestors/-/ancestors-0.5.0.tgz#46a84752aa036b48a97be47d3d83f96f6626979c"
+  integrity sha512-sINhM7keJLsDTg5ZsguJKMjxvSiiNltnIG2hAZ0xQnU/eHbRmuUWAMKQ02Y8QHZdlQNDEwNxwBiDbqoSV35nsw==
   dependencies:
-    "@domp/is" "^0.2.2"
+    "@domp/fp" "^0.3.0"
+    "@domp/is" "^0.5.0"
 
 "@domp/children@^0.6.0":
   version "0.6.0"
@@ -943,11 +944,6 @@
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@domp/fp/-/fp-0.3.0.tgz#3ba690e7abc822b869b5c3f7c5927d24075d6b5d"
   integrity sha512-lFz5aIVSqd2m07g44JAKPrZ4WOm6IBtz4PiyvNPnuvOx5thQouRjdVZhcHctlAb3rr/n3Qb1J0dJ0YXLzLyCpg==
-
-"@domp/is@^0.2.1", "@domp/is@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@domp/is/-/is-0.2.2.tgz#56e9a1b7539ee0b3ff2b2c0777080effcfecccee"
-  integrity sha512-5gOb/58OG78J5EzCSAp3KIX6UctfIiaNgm0Bwtg89lYWbiheyofaOF8YNpwx5s4mBNOqWBnr5mA+vcMCCYdiAQ==
 
 "@domp/is@^0.5.0":
   version "0.5.0"
@@ -1491,13 +1487,13 @@ define-properties@^1.1.3, define-properties@^1.1.4:
     has-property-descriptors "^1.0.0"
     object-keys "^1.1.1"
 
-descendants@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/descendants/-/descendants-0.1.2.tgz#7a6303d64c50f24f78cf9eab17795a1973db1d5b"
-  integrity sha512-Pej+x3/a2OAky1NnMtYUULhK2za1UU661wYtxHzRA+UwILMGpt3n+FWXwLK0yIEuNYkXKrRc3mBEtRn5X2njEg==
+descendants@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/descendants/-/descendants-0.2.0.tgz#1bbee4fc2f9a42e46aa7f0c8eb27506be32f53f7"
+  integrity sha512-TAGDTo1ZuZHNJw+4ssoR1+eBhreVGvFY++Nlzy5ns/6vPGXLB9t0hcP72/qOTRlEhnyRhyHqIqAseYXarv4Urg==
   dependencies:
-    "@domp/ancestors" "^0.1.0"
-    "@domp/is" "^0.2.1"
+    "@domp/ancestors" "^0.5.0"
+    "@domp/is" "^0.5.0"
     "@lowline/difference" "^0.1.0"
 
 doctrine@^2.1.0:

@@ -41,7 +41,7 @@
     "@domp/children": "^0.6.0",
     "@domp/closest": "^0.5.0",
     "@domp/is": "^0.5.0",
-    "descendants": "^0.1.2"
+    "descendants": "^0.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
