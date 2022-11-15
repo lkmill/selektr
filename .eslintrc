@@ -1,9 +1,7 @@
 {
-  "extends": [ "standard" ],
+  "root": true,
 
-  "rules": {
-    "comma-dangle": [ 2, "always-multiline" ]
-  },
+  "extends": ["standard"],
 
   "env": {
     "browser": true
